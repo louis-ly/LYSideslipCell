@@ -7,6 +7,7 @@
 //
 
 #import "LYSideslipCell.h"
+#import <objc/runtime.h>
 
 #define LYSideslipCellButtonMargin 15
 #define LYSideslipCellLeftLimitScrollMargin 15
@@ -221,16 +222,11 @@ static NSUInteger kLyHeight = 6;
     if (_containLeftConstraint.constant == 0) return;
     
     [self closeAllOperation];
-    _containLeftConstraint.constant = _sideslipLeftConstraint.constant = 0;
-    [UIView animateWithDuration:0.15 delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
+    _containLeftConstraint.constant = _sideslipLeftConstraint.constant = -10;
+    [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
         [self layoutIfNeeded];
     } completion:^(BOOL finished) {
-        _containLeftConstraint.constant = _sideslipLeftConstraint.constant = -10;
-        [UIView animateWithDuration:0.1 delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
-            [self layoutIfNeeded];
-        } completion:^(BOOL finished) {
-            [self hiddenSideslipButton];
-        }];
+        [self hiddenSideslipButton];
     }];
 }
 
@@ -348,6 +344,40 @@ static NSUInteger kLyHeight = 6;
     [super setSelected:selected animated:animated];
 }
 
++ (void)load {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        Class class = [self class];
+        
+        SEL originalSelector = @selector(addSubview:);
+        SEL swizzledSelector = @selector(ly_addSubview:);
+        
+        Method originalMethod = class_getInstanceMethod(class, originalSelector);
+        Method swizzledMethod = class_getInstanceMethod(class, swizzledSelector);
+        
+        BOOL didAddMethod =
+        class_addMethod(class,
+                        originalSelector,
+                        method_getImplementation(swizzledMethod),
+                        method_getTypeEncoding(swizzledMethod));
+        
+        if (didAddMethod) {
+            class_replaceMethod(class,
+                                swizzledSelector,
+                                method_getImplementation(originalMethod),
+                                method_getTypeEncoding(originalMethod));
+        } else {
+            method_exchangeImplementations(originalMethod, swizzledMethod);
+        }
+    });
+}
 
+- (void)ly_addSubview:(UIView *)view {
+    if ([view isKindOfClass:NSClassFromString(@"UITableViewCellContentView")] || [view isKindOfClass:NSClassFromString(@"_UITableViewCellSeparatorView")]) {
+        [self ly_addSubview:view];
+    } else {
+        [self.contentView addSubview:view];
+    }
+}
 
 @end

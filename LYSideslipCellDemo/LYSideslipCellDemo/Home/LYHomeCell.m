@@ -25,22 +25,22 @@
         _iconImageView.layer.cornerRadius = 6;
         _iconImageView.layer.borderColor = [UIColor colorWithWhite:0 alpha:0.2].CGColor;
         _iconImageView.layer.borderWidth = 0.5;
-        [self.contentView addSubview:_iconImageView];
+        [self addSubview:_iconImageView];
         
         _userNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(CGRectGetMaxX(_iconImageView.frame) + 10, 10, 200, 25)];
-        [self.contentView addSubview:_userNameLabel];
+        [self addSubview:_userNameLabel];
         
         CGFloat screenWidth = [UIScreen mainScreen].bounds.size.width;
         _lastMessageLabel = [[UILabel alloc] initWithFrame:CGRectMake(CGRectGetMinX(_userNameLabel.frame), CGRectGetMaxY(_userNameLabel.frame), screenWidth - CGRectGetMinX(_userNameLabel.frame) - 10, 25)];
         _lastMessageLabel.textColor = [UIColor grayColor];
         _lastMessageLabel.font = [UIFont systemFontOfSize:14];
-        [self.contentView addSubview:_lastMessageLabel];
+        [self addSubview:_lastMessageLabel];
         
         _timeLabel = [[UILabel alloc] initWithFrame:CGRectMake(screenWidth - 200 - 10, 10, 200, 25)];
         _timeLabel.font = [UIFont systemFontOfSize:13];
         _timeLabel.textColor = [UIColor lightGrayColor];
         _timeLabel.textAlignment = NSTextAlignmentRight;
-        [self.contentView addSubview:_timeLabel];
+        [self addSubview:_timeLabel];
     }
     return self;
 }
