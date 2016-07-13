@@ -20,6 +20,11 @@ static NSUInteger kLyRight = 4;
 static NSUInteger kLyWidth = 5;
 static NSUInteger kLyHeight = 6;
 
+@interface LYSideslipView : UIView
+@end
+@implementation LYSideslipView
+@end
+
 @interface LYSideslipCell () <UIGestureRecognizerDelegate>
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) UIView *sideslipContainView;
@@ -81,7 +86,7 @@ static NSUInteger kLyHeight = 6;
                            [self item:_containView attr:kLyWidth toItem:self attr:kLyWidth cons:0],
                            _containLeftConstraint]];
 
-    _sideslipContainView = [UIView new];
+    _sideslipContainView = [LYSideslipView new];
     _sideslipContainView.clipsToBounds = YES;
     _sideslipContainView.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:_sideslipContainView];
@@ -373,7 +378,7 @@ static NSUInteger kLyHeight = 6;
 }
 
 - (void)ly_addSubview:(UIView *)view {
-    if ([view isKindOfClass:NSClassFromString(@"UITableViewCellContentView")] || [view isKindOfClass:NSClassFromString(@"_UITableViewCellSeparatorView")]) {
+    if ([view isKindOfClass:NSClassFromString(@"UITableViewCellContentView")] || [view isKindOfClass:NSClassFromString(@"_UITableViewCellSeparatorView")] || [view isKindOfClass:LYSideslipView.class]) {
         [self ly_addSubview:view];
     } else {
         [self.contentView addSubview:view];
