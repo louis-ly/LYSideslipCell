@@ -19,7 +19,7 @@
 		BF8C56461D34981B0003550C /* LYHomeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8C563D1D34981B0003550C /* LYHomeCell.m */; };
 		BF8C56471D34981B0003550C /* LYHomeCellModel.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8C563F1D34981B0003550C /* LYHomeCellModel.m */; };
 		BF8C56481D34981B0003550C /* LYHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8C56411D34981B0003550C /* LYHomeViewController.m */; };
-		BF8C564D1D34985A0003550C /* LYSideslipCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8C564C1D34985A0003550C /* LYSideslipCell.m */; };
+		BF8C56541D35D8A70003550C /* LYSideslipCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8C56531D35D8A70003550C /* LYSideslipCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,8 +45,8 @@
 		BF8C563F1D34981B0003550C /* LYHomeCellModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LYHomeCellModel.m; sourceTree = "<group>"; };
 		BF8C56401D34981B0003550C /* LYHomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LYHomeViewController.h; sourceTree = "<group>"; };
 		BF8C56411D34981B0003550C /* LYHomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LYHomeViewController.m; sourceTree = "<group>"; };
-		BF8C564B1D34985A0003550C /* LYSideslipCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LYSideslipCell.h; sourceTree = "<group>"; };
-		BF8C564C1D34985A0003550C /* LYSideslipCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LYSideslipCell.m; sourceTree = "<group>"; };
+		BF8C56521D35D8A70003550C /* LYSideslipCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LYSideslipCell.h; sourceTree = "<group>"; };
+		BF8C56531D35D8A70003550C /* LYSideslipCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LYSideslipCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,7 +79,7 @@
 		BF8C56191D3497F30003550C /* LYSideslipCellDemo */ = {
 			isa = PBXGroup;
 			children = (
-				BF8C56491D34985A0003550C /* LYSideslipCell */,
+				BF8C56511D35D8A70003550C /* Classes */,
 				BF8C56311D34981B0003550C /* Contact */,
 				BF8C56361D34981B0003550C /* Favorite */,
 				BF8C563B1D34981B0003550C /* Home */,
@@ -137,21 +137,14 @@
 			path = Home;
 			sourceTree = "<group>";
 		};
-		BF8C56491D34985A0003550C /* LYSideslipCell */ = {
+		BF8C56511D35D8A70003550C /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				BF8C564A1D34985A0003550C /* Classes */,
+				BF8C56521D35D8A70003550C /* LYSideslipCell.h */,
+				BF8C56531D35D8A70003550C /* LYSideslipCell.m */,
 			);
-			path = LYSideslipCell;
-			sourceTree = "<group>";
-		};
-		BF8C564A1D34985A0003550C /* Classes */ = {
-			isa = PBXGroup;
-			children = (
-				BF8C564B1D34985A0003550C /* LYSideslipCell.h */,
-				BF8C564C1D34985A0003550C /* LYSideslipCell.m */,
-			);
-			path = Classes;
+			name = Classes;
+			path = ../../LYSideslipCell/Classes;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -230,10 +223,10 @@
 				BF8C56431D34981B0003550C /* LYContactViewController.m in Sources */,
 				BF8C56481D34981B0003550C /* LYHomeViewController.m in Sources */,
 				BF8C56441D34981B0003550C /* LYFavoriteCell.m in Sources */,
+				BF8C56541D35D8A70003550C /* LYSideslipCell.m in Sources */,
 				BF8C561F1D3497F30003550C /* AppDelegate.m in Sources */,
 				BF8C56461D34981B0003550C /* LYHomeCell.m in Sources */,
 				BF8C561C1D3497F30003550C /* main.m in Sources */,
-				BF8C564D1D34985A0003550C /* LYSideslipCell.m in Sources */,
 				BF8C56421D34981B0003550C /* LYContactCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -385,6 +378,7 @@
 				BF8C56301D3497F30003550C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

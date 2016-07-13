@@ -75,10 +75,4 @@ cell.delegate = self;
 @end
 ```
 
-4.给cell添加视图的时候，需要加到contentView上面
-
-```
-[self.contentView addSubview:view];
-```
-
-5.更多细节请看demo
+4.更多细节请看demo
