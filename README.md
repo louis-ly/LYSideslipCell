@@ -3,14 +3,14 @@
 高仿微信侧滑效果, 兼容代码和xib创建, 屏幕翻转.
 
 #### 首页消息Cell
-![image](https://github.com/louis-ly/LYSideslipCell/blob/master/Snapshots/Snapshot1.gif)
+![image](http://oad5jrdyg.bkt.clouddn.com/Snapshot1.gif)
 
 
 #### 联系人Cell
-![image](https://github.com/louis-ly/LYSideslipCell/blob/master/Snapshots/Snapshot2.gif)
+![image](http://oad5jrdyg.bkt.clouddn.com/Snapshot2.gif)
 
 #### 收藏Cell
-![image](https://github.com/louis-ly/LYSideslipCell/blob/master/Snapshots/Snapshot3.gif)
+![image](http://oad5jrdyg.bkt.clouddn.com/Snapshot3.gif)
 
 
 ## Podfile

@@ -35,7 +35,6 @@ static NSUInteger kLyHeight = 6;
 @property (nonatomic, strong) NSLayoutConstraint *sideslipLeftConstraint;
 @property (nonatomic, assign) BOOL sideslip;
 @property (nonatomic, assign) BOOL discardTouchDown;
-
 @property (nonatomic, strong) NSMutableArray *actionBtns;
 @end
 
@@ -68,7 +67,6 @@ static NSUInteger kLyHeight = 6;
     }
     return self;
 }
-
 
 - (void)setupSideslipCell {
     _containView = [UIView new];
@@ -114,7 +112,6 @@ static NSUInteger kLyHeight = 6;
     [_containView addGestureRecognizer:_panGesture];
 }
 
-
 #pragma mark - UIGestureRecognizerDelegate
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
     if (gestureRecognizer == _panGesture) {
@@ -138,7 +135,6 @@ static NSUInteger kLyHeight = 6;
 - (void)scrollViewTapped:(UITapGestureRecognizer *)tap {
     if (_sideslip) [self hiddenAllSideslipButton];
 }
-
 
 - (void)containViewPan:(UIPanGestureRecognizer *)pan {
     CGPoint point = [pan translationInView:pan.view];
@@ -270,7 +266,6 @@ static NSUInteger kLyHeight = 6;
     }];
 }
 
-
 #pragma mark - Public Methods
 - (void)setRightButtons:(NSArray <UIButton *>*)rightButtons {
     if (!rightButtons || rightButtons.count == 0) return;
@@ -336,7 +331,6 @@ static NSUInteger kLyHeight = 6;
     }
     return _actionBtns;
 }
-
 
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated {
     if (_sideslip) return;
