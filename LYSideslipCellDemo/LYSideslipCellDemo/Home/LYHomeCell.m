@@ -30,14 +30,13 @@
         _userNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(CGRectGetMaxX(_iconImageView.frame) + 10, 10, 200, 25)];
         [self addSubview:_userNameLabel];
         
-        CGFloat screenWidth = [UIScreen mainScreen].bounds.size.width;
-        _lastMessageLabel = [[UILabel alloc] initWithFrame:CGRectMake(CGRectGetMinX(_userNameLabel.frame), CGRectGetMaxY(_userNameLabel.frame), screenWidth - CGRectGetMinX(_userNameLabel.frame) - 10, 25)];
+        _lastMessageLabel = [UILabel new];
         _lastMessageLabel.textColor = [UIColor grayColor];
         _lastMessageLabel.font = [UIFont systemFontOfSize:14];
         [self addSubview:_lastMessageLabel];
         
-        _timeLabel = [[UILabel alloc] initWithFrame:CGRectMake(screenWidth - 200 - 10, 10, 200, 25)];
-        _timeLabel.font = [UIFont systemFontOfSize:13];
+        _timeLabel = [UILabel new];
+        _timeLabel.font = [UIFont systemFontOfSize:12];
         _timeLabel.textColor = [UIColor lightGrayColor];
         _timeLabel.textAlignment = NSTextAlignmentRight;
         [self addSubview:_timeLabel];
@@ -45,6 +44,12 @@
     return self;
 }
 
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    CGFloat screenWidth = [UIScreen mainScreen].bounds.size.width;
+    _lastMessageLabel.frame = CGRectMake(CGRectGetMinX(_userNameLabel.frame), CGRectGetMaxY(_userNameLabel.frame), screenWidth - CGRectGetMinX(_userNameLabel.frame) - 10, 25);
+    _timeLabel.frame = CGRectMake(screenWidth - 200 - 10, 10, 200, 25);
+}
 
 - (void)setModel:(LYHomeCellModel *)model {
     _model = model;

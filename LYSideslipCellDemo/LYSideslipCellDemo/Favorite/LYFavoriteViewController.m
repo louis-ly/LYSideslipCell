@@ -9,7 +9,7 @@
 #import "LYFavoriteViewController.h"
 #import "LYFavoriteCell.h"
 
-@interface LYFavoriteViewController ()
+@interface LYFavoriteViewController () <LYSideslipCellDelegate>
 
 @end
 
@@ -33,17 +33,8 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     LYFavoriteCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([LYFavoriteCell class]) forIndexPath:indexPath];
+    cell.delegate = self;
     cell.backgroundColor = [UIColor clearColor];
-    
-    UIButton *tagBtn = [cell rowActionWithStyle:LYSideslipCellActionStyleNormal title:nil];
-    tagBtn.backgroundColor = [UIColor clearColor];
-    [tagBtn setImage:[UIImage imageNamed:@"Fav_Edit_Tag"] forState:UIControlStateNormal];
-    
-    UIButton *deleteBtn = [cell rowActionWithStyle:LYSideslipCellActionStyleNormal title:nil];
-    deleteBtn.backgroundColor = [UIColor clearColor];
-    [deleteBtn setImage:[UIImage imageNamed:@"Fav_Edit_Delete"] forState:UIControlStateNormal];
-    
-    [cell setRightButtons:@[tagBtn, deleteBtn]];
     
     cell.avatarImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"icon%d", arc4random()%5]];
     
@@ -66,4 +57,23 @@
     return view;
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+}
+
+#pragma mark - LYSideslipCellDelegate
+- (NSArray<LYSideslipCellAction *> *)sideslipCell:(LYSideslipCell *)sideslipCell editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
+    LYSideslipCellAction *tagAction = [LYSideslipCellAction rowActionWithStyle:LYSideslipCellActionStyleNormal title:nil handler:^(LYSideslipCellAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+        NSLog(@"点击的打标签按钮");
+    }];
+    tagAction.backgroundColor = [UIColor clearColor];
+    tagAction.image = [UIImage imageNamed:@"Fav_Edit_Tag"];
+    
+    LYSideslipCellAction *deleteAction = [LYSideslipCellAction rowActionWithStyle:LYSideslipCellActionStyleNormal title:nil handler:^(LYSideslipCellAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+        NSLog(@"点击的删除按钮");
+    }];
+    deleteAction.backgroundColor = [UIColor clearColor];
+    deleteAction.image = [UIImage imageNamed:@"Fav_Edit_Delete"];
+    return @[tagAction, deleteAction];
+}
 @end

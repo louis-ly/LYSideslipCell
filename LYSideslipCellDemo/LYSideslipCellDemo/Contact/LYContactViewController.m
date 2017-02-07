@@ -9,7 +9,7 @@
 #import "LYContactViewController.h"
 #import "LYContactCell.h"
 
-@interface LYContactViewController ()
+@interface LYContactViewController () <LYSideslipCellDelegate>
 @property (nonatomic, strong) NSArray *titles;
 @end
 
@@ -34,8 +34,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     LYContactCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([LYContactCell class]) forIndexPath:indexPath];
-    
-    [cell setRightButtons:@[[cell rowActionWithStyle:LYSideslipCellActionStyleNormal title:@"备注"]]];
+    cell.delegate = self;
     
     cell.iconImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"icon%ld", indexPath.row]];
     
@@ -72,10 +71,21 @@
     return headerView;
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+}
+
 - (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView {
     return self.titles;
 }
 
+#pragma mark - LYSideslipCellDelegate
+- (NSArray<LYSideslipCellAction *> *)sideslipCell:(LYSideslipCell *)sideslipCell editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
+    LYSideslipCellAction *action = [LYSideslipCellAction rowActionWithStyle:LYSideslipCellActionStyleNormal title:@"备注" handler:^(LYSideslipCellAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+        
+    }];
+    return @[action];
+}
 
 - (NSArray *)titles {
     if (!_titles) {

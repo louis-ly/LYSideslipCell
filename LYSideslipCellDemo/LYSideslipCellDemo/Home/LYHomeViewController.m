@@ -38,24 +38,7 @@
         cell = [[LYHomeCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:NSStringFromClass(LYSideslipCell.class)];
         cell.delegate = self;
     }
-    LYHomeCellModel *model = _dataArray[indexPath.row];
-    UIButton *button1 = [cell rowActionWithStyle:LYSideslipCellActionStyleNormal title:@"取消关注"];
-    UIButton *button2 = [cell rowActionWithStyle:LYSideslipCellActionStyleDestructive title:@"删除"];
-    UIButton *button3 = [cell rowActionWithStyle:LYSideslipCellActionStyleNormal title:@"置顶"];
-    switch (model.messageType) {
-        case LYHomeCellTypeMessage:
-            [cell setRightButtons:@[button2]];
-            break;
-        case LYHomeCellTypeSubscription:
-            [cell setRightButtons:@[button1, button2]];
-            break;
-        case LYHomeCellTypePubliction:
-            [cell setRightButtons:@[button3, button2]];
-            break;
-        default:
-            break;
-    }
-    cell.model = model;
+    cell.model = _dataArray[indexPath.row];
     return cell;
 }
 
@@ -76,14 +59,42 @@
 
 
 #pragma mark - LYSideslipCellDelegate
+- (NSArray<LYSideslipCellAction *> *)sideslipCell:(LYSideslipCell *)sideslipCell editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
+    LYHomeCellModel *model = _dataArray[indexPath.row];
+    LYSideslipCellAction *action1 = [LYSideslipCellAction rowActionWithStyle:LYSideslipCellActionStyleNormal title:@"取消关注" handler:^(LYSideslipCellAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+        NSLog(@"点击了取消关注");
+        [sideslipCell hideSideslip];
+    }];
+    LYSideslipCellAction *action2 = [LYSideslipCellAction rowActionWithStyle:LYSideslipCellActionStyleDestructive title:@"删除" handler:^(LYSideslipCellAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+        NSLog(@"删除");
+        [sideslipCell hideSideslip];
+    }];
+    LYSideslipCellAction *action3 = [LYSideslipCellAction rowActionWithStyle:LYSideslipCellActionStyleNormal title:@"置顶" handler:^(LYSideslipCellAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+        NSLog(@"置顶");
+        [sideslipCell hideSideslip];
+    }];
+    
+    NSArray *array = @[];
+    switch (model.messageType) {
+        case LYHomeCellTypeMessage:
+            array = @[action2];
+            break;
+        case LYHomeCellTypeSubscription:
+            array = @[action1, action2];
+            break;
+        case LYHomeCellTypePubliction:
+            array = @[action3, action2];
+            break;
+        default:
+            break;
+    }
+    return array;
+}
 - (void)sideslipCell:(LYSideslipCell *)sideslipCell rowAtIndexPath:(NSIndexPath *)indexPath didSelectedAtIndex:(NSInteger)index {
     NSLog(@"选中了: %ld", index);
 }
 
 - (BOOL)sideslipCell:(LYSideslipCell *)sideslipCell canSideslipRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == 4) {
-        return NO;
-    }
     return YES;
 }
 

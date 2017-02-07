@@ -8,6 +8,25 @@
 
 #import <UIKit/UIKit.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
+typedef NS_ENUM(NSInteger, LYSideslipCellActionStyle) {
+    LYSideslipCellActionStyleDefault = 0,
+    LYSideslipCellActionStyleDestructive = LYSideslipCellActionStyleDefault, // 删除 红底
+    LYSideslipCellActionStyleNormal // 正常 灰底
+};
+
+@interface LYSideslipCellAction : NSObject
+
++ (instancetype)rowActionWithStyle:(LYSideslipCellActionStyle)style title:(nullable NSString *)title handler:(void (^)(LYSideslipCellAction *action, NSIndexPath *indexPath))handler;
+
+@property (nonatomic, readonly) LYSideslipCellActionStyle style;
+@property (nonatomic, copy, nullable) NSString *title;
+@property (nonatomic, strong, nullable) UIImage *image;
+@property (nonatomic, copy, nullable) UIColor *backgroundColor; // default background color is dependent on style
+
+@end
+
 @class LYSideslipCell;
 @protocol LYSideslipCellDelegate <NSObject>
 @optional;
@@ -29,39 +48,23 @@
  *  @return YES 表示当前cell可以侧滑, NO 不可以
  */
 - (BOOL)sideslipCell:(LYSideslipCell *)sideslipCell canSideslipRowAtIndexPath:(NSIndexPath *)indexPath;
+
+- (nullable NSArray<LYSideslipCellAction *> *)sideslipCell:(LYSideslipCell *)sideslipCell editActionsForRowAtIndexPath:(NSIndexPath *)indexPath;
 @end
 
 
-typedef NS_ENUM(NSInteger, LYSideslipCellActionStyle) {
-    LYSideslipCellActionStyleDefault = 0,
-    LYSideslipCellActionStyleDestructive = LYSideslipCellActionStyleDefault, // 删除 红底
-    LYSideslipCellActionStyleNormal // 正常 灰底
-};
+
 
 @interface LYSideslipCell : UITableViewCell
 
-@property (nonatomic, strong) UIView *containView;
-
 @property (nonatomic, weak) id<LYSideslipCellDelegate> delegate;
-/**
- *  设置侧滑按钮
- *
- *  @param rightButtons 装侧滑按钮的数组. 按钮可以自己创建, 也可以用本类提供的方法 rowActionWithStyle:title 创建
- */
-- (void)setRightButtons:(NSArray<UIButton*> *)rightButtons;
-
-/**
- *  创建侧滑按钮(按钮实现可复用)
- *
- *  @param style 按钮风格
- *  @param title 按钮文字
- *
- *  @return 创建好的侧滑按钮
- */
-- (UIButton *)rowActionWithStyle:(LYSideslipCellActionStyle)style title:(NSString *)title;
 
 /**
  *  隐藏侧滑按钮
  */
 - (void)hiddenSideslipButton;
+
+- (void)hideSideslip;
 @end
+
+NS_ASSUME_NONNULL_END
