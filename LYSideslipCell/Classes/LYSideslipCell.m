@@ -7,11 +7,6 @@
 //
 
 #import "LYSideslipCell.h"
-#import <objc/runtime.h>
-
-#define LYSideslipCellButtonMargin 15
-#define LYSideslipCellLeftLimitScrollMargin 15
-#define LYSideslipCellRightLimitScrollMargin 30
 
 @interface LYSideslipCellAction ()
 @property (nonatomic, copy) void (^handler)(LYSideslipCellAction *action, NSIndexPath *indexPath);
@@ -25,6 +20,10 @@
     action.style = style;
     return action;
 }
+
+- (CGFloat)margin {
+    return _margin == 0 ? 15 : _margin;
+}
 @end
 
 @interface LYSideslipCell () <UIGestureRecognizerDelegate>
@@ -33,7 +32,6 @@
 
 @implementation LYSideslipCell {
     UITableView *_tableView;
-    UIView *_btnContainView;
     NSIndexPath *_indexPath;
     NSArray <LYSideslipCellAction *>* _actions;
     BOOL _discardTouchDown;
@@ -41,42 +39,6 @@
 }
 
 #pragma mark - Life Cycle
-+ (void)load {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        Class class = [self class];
-        
-        SEL originalSelector = @selector(addSubview:);
-        SEL swizzledSelector = @selector(ly_addSubview:);
-        
-        Method originalMethod = class_getInstanceMethod(class, originalSelector);
-        Method swizzledMethod = class_getInstanceMethod(class, swizzledSelector);
-        
-        BOOL didAddMethod =
-        class_addMethod(class,
-                        originalSelector,
-                        method_getImplementation(swizzledMethod),
-                        method_getTypeEncoding(swizzledMethod));
-        
-        if (didAddMethod) {
-            class_replaceMethod(class,
-                                swizzledSelector,
-                                method_getImplementation(originalMethod),
-                                method_getTypeEncoding(originalMethod));
-        } else {
-            method_exchangeImplementations(originalMethod, swizzledMethod);
-        }
-    });
-}
-
-- (void)ly_addSubview:(UIView *)view {
-    if ([view isKindOfClass:NSClassFromString(@"UITableViewCellContentView")] || [view isKindOfClass:NSClassFromString(@"_UITableViewCellSeparatorView")]) {
-        [self ly_addSubview:view];
-    } else {
-        [self.contentView addSubview:view];
-    }
-}
-
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]) {
         [self setupSideslipCell];
@@ -91,6 +53,13 @@
     return self;
 }
 
+- (void)setupSideslipCell {
+    _panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(contentViewPan:)];
+    _panGesture.delegate = self;
+    [self.contentView addGestureRecognizer:_panGesture];
+    self.contentView.backgroundColor = [UIColor whiteColor];
+}
+
 - (void)layoutSubviews {
     CGFloat x = 0;
     if (_sideslip) x = self.contentView.frame.origin.x;
@@ -103,15 +72,8 @@
     }
     _btnContainView.frame = CGRectMake(self.frame.size.width - totalWidth, 0, totalWidth, self.frame.size.height);
     
+    // 侧滑状态旋转屏幕时, 保持侧滑
     if (_sideslip) [self setContentViewX:x];
-}
-
-- (void)setupSideslipCell {
-    self.contentView.backgroundColor = [UIColor whiteColor];
-    
-    _panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(contentViewPan:)];
-    _panGesture.delegate = self;
-    [self.contentView addGestureRecognizer:_panGesture];
 }
 
 #pragma mark - UIGestureRecognizerDelegate
@@ -157,10 +119,10 @@
         
         CGRect frame = self.contentView.frame;
         frame.origin.x += point.x;
-        if (frame.origin.x > LYSideslipCellLeftLimitScrollMargin) {
-            frame.origin.x = LYSideslipCellLeftLimitScrollMargin;
-        } else if (frame.origin.x < -LYSideslipCellRightLimitScrollMargin - _btnContainView.frame.size.width) {
-            frame.origin.x = -LYSideslipCellRightLimitScrollMargin - _btnContainView.frame.size.width;
+        if (frame.origin.x > 15) {
+            frame.origin.x = 15;
+        } else if (frame.origin.x < -30 - _btnContainView.frame.size.width) {
+            frame.origin.x = -30 - _btnContainView.frame.size.width;
         }
         
         self.contentView.frame = frame;
@@ -297,6 +259,8 @@
     for (int i = 0; i < actions.count; i++) {
         LYSideslipCellAction *action = actions[i];
         UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+        btn.adjustsImageWhenHighlighted = NO;
+        
         [btn setTitle:action.title forState:UIControlStateNormal];
     
         if (action.backgroundColor) {
@@ -309,11 +273,18 @@
             [btn setImage:action.image forState:UIControlStateNormal];
         }
         
+        if (action.fontSize != 0) {
+            btn.titleLabel.font = [UIFont systemFontOfSize:action.fontSize];
+        }
+        
+        if (action.titleColor) {
+            [btn setTitleColor:action.titleColor forState:UIControlStateNormal];
+        }
+        
         CGFloat width = [action.title boundingRectWithSize:CGSizeMake(MAXFLOAT, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName : btn.titleLabel.font} context:nil].size.width;
         width += (action.image ? action.image.size.width : 0);
-        btn.frame = CGRectMake(0, 0, width + LYSideslipCellButtonMargin*2, self.frame.size.height);
+        btn.frame = CGRectMake(0, 0, width + action.margin*2, self.frame.size.height);
         
-        btn.contentEdgeInsets = UIEdgeInsetsMake(0, LYSideslipCellButtonMargin, 0, LYSideslipCellButtonMargin);
         btn.tag = i;
         [btn addTarget:self action:@selector(actionBtnDidClicked:) forControlEvents:UIControlEventTouchUpInside];
         [_btnContainView addSubview:btn];

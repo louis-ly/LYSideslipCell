@@ -19,9 +19,12 @@ typedef NS_ENUM(NSInteger, LYSideslipCellActionStyle) {
 @interface LYSideslipCellAction : NSObject
 + (instancetype)rowActionWithStyle:(LYSideslipCellActionStyle)style title:(nullable NSString *)title handler:(void (^)(LYSideslipCellAction *action, NSIndexPath *indexPath))handler;
 @property (nonatomic, readonly) LYSideslipCellActionStyle style;
-@property (nonatomic, copy, nullable) NSString *title;
-@property (nonatomic, strong, nullable) UIImage *image;
-@property (nonatomic, copy, nullable) UIColor *backgroundColor;
+@property (nonatomic, copy, nullable) NSString *title;          // 文字内容
+@property (nonatomic, strong, nullable) UIImage *image;         // 按钮图片. 默认无图
+@property (nonatomic, assign) CGFloat fontSize;                 // 字体大小. 默认17
+@property (nonatomic, strong, nullable) UIColor *titleColor;    // 文字颜色. 默认白色
+@property (nonatomic, copy, nullable) UIColor *backgroundColor; // 背景颜色. 默认透明
+@property (nonatomic, assign) CGFloat margin;                   // 内容左右间距. 默认15
 @end
 
 @class LYSideslipCell;
@@ -61,6 +64,11 @@ typedef NS_ENUM(NSInteger, LYSideslipCellActionStyle) {
 @interface LYSideslipCell : UITableViewCell
 
 @property (nonatomic, weak) id<LYSideslipCellDelegate> delegate;
+
+/**
+ *  按钮容器
+ */
+@property (nonatomic, strong) UIView *btnContainView;
 
 /**
  *  隐藏侧滑按钮

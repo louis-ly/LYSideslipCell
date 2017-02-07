@@ -15,6 +15,7 @@
 @implementation LYFavoriteCell
 
 - (void)awakeFromNib {
+    [super awakeFromNib];
     _avatarImageView.layer.cornerRadius = _avatarImageView.frame.size.width / 2;
 }
 
