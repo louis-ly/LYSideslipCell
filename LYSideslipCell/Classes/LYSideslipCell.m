@@ -34,7 +34,6 @@
     UITableView *_tableView;
     NSIndexPath *_indexPath;
     NSArray <LYSideslipCellAction *>* _actions;
-    BOOL _discardTouchDown;
     UIPanGestureRecognizer *_panGesture;
 }
 
@@ -79,14 +78,25 @@
 #pragma mark - UIGestureRecognizerDelegate
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
     if (gestureRecognizer == _panGesture) {
-        if (!self.tableView.scrollEnabled) return YES;
+        // 若 tableView 不能滚动时, 还触发手势, 则隐藏侧滑
+        if (!self.tableView.scrollEnabled) {
+            [self hiddenAllSideslipButton];
+            return NO;
+        }
         UIPanGestureRecognizer *gesture = (UIPanGestureRecognizer *)gestureRecognizer;
         CGPoint translation = [gesture translationInView:gesture.view];
+        
+        // 如果手势相对于水平方向的角度大于45°, 则不触发侧滑
         BOOL shouldBegin = fabs(translation.y) <= fabs(translation.x);
         if (!shouldBegin) return NO;
-        if ([_delegate respondsToSelector:@selector(sideslipCell:canSideslipRowAtIndexPath:)])
+        
+        // 询问代理是否需要侧滑
+        if ([_delegate respondsToSelector:@selector(sideslipCell:canSideslipRowAtIndexPath:)]) {
             shouldBegin = [_delegate sideslipCell:self canSideslipRowAtIndexPath:[self.tableView indexPathForCell:self]] || _sideslip;
+        }
+        
         if (shouldBegin) {
+            // 向代理获取侧滑展示内容数组
             if ([_delegate respondsToSelector:@selector(sideslipCell:editActionsForRowAtIndexPath:)]) {
                 NSArray <LYSideslipCellAction*> *actions = [_delegate sideslipCell:self editActionsForRowAtIndexPath:self.indexPath];
                 if (!actions || actions.count == 0) return NO;
@@ -106,17 +116,7 @@
     UIGestureRecognizerState state = pan.state;
     [pan setTranslation:CGPointZero inView:pan.view];
     
-    if (state == UIGestureRecognizerStateBegan) {
-        if (_sideslip) {
-            _discardTouchDown = YES;
-            self.userInteractionEnabled = NO;
-            [self hiddenAllSideslipButton];
-        }
-    } else if (state == UIGestureRecognizerStateChanged) {
-        
-        if (_discardTouchDown) return;
-        if (_btnContainView.frame.size.width == 0) return;
-        
+    if (state == UIGestureRecognizerStateChanged) {
         CGRect frame = self.contentView.frame;
         frame.origin.x += point.x;
         if (frame.origin.x > 15) {
@@ -124,31 +124,21 @@
         } else if (frame.origin.x < -30 - _btnContainView.frame.size.width) {
             frame.origin.x = -30 - _btnContainView.frame.size.width;
         }
-        
         self.contentView.frame = frame;
         
     } else if (state == UIGestureRecognizerStateEnded) {
-        
-        if (_discardTouchDown) {
-            _discardTouchDown = NO;
-            self.userInteractionEnabled = YES;
+        CGPoint velocity = [pan velocityInView:pan.view];
+        if (self.contentView.frame.origin.x == 0) {
             return;
-        }
-        
-        if (self.contentView.frame.origin.x == 0) return;
-        
-        if (self.contentView.frame.origin.x > 5) {
+        } else if (self.contentView.frame.origin.x > 5) {
             [self hiddenWithBounceAnimation];
+        } else if (fabs(self.contentView.frame.origin.x) >= 40 && velocity.x <= 0) {
+            [self showSideslipButton];
         } else {
-            if (fabs(self.contentView.frame.origin.x) >= 40 && point.x <= 0) {
-                [self showSideslipButton];
-            } else {
-                [self hiddenSideslipButton];
-            }
+            [self hiddenSideslipButton];
         }
-    } else {
-        _discardTouchDown = NO;
-        self.userInteractionEnabled = YES;
+        
+    } else if (state == UIGestureRecognizerStateCancelled) {
         [self hiddenAllSideslipButton];
     }
 }
@@ -193,10 +183,8 @@
 }
 
 - (void)hiddenWithBounceAnimation {
-    if (self.contentView.frame.origin.x == 0) return;
-    
     [self closeAllOperation];
-
+    //self.tableView.userInteractionEnabled = NO;
     [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
         [self setContentViewX:-10];
     } completion:^(BOOL finished) {
@@ -205,12 +193,10 @@
 }
 
 - (void)hiddenAllSideslipButton {
-    if (self.contentView.frame.origin.x == 0) {
-        for (LYSideslipCell *cell in self.tableView.visibleCells)
-            if ([cell isKindOfClass:LYSideslipCell.class])
-                [cell hiddenSideslipButton];
-    } else {
-        [self hiddenSideslipButton];
+    for (LYSideslipCell *cell in self.tableView.visibleCells) {
+        if ([cell isKindOfClass:LYSideslipCell.class]) {
+            [cell hiddenSideslipButton];
+        }
     }
 }
 
@@ -232,10 +218,11 @@
     [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
         [self setContentViewX:-_btnContainView.frame.size.width];
     } completion:^(BOOL finished) {
-        for (LYSideslipCell *cell in self.tableView.visibleCells)
+        for (LYSideslipCell *cell in self.tableView.visibleCells) {
             if ([cell isKindOfClass:LYSideslipCell.class]) {
                 cell.userInteractionEnabled = YES;
             }
+        }
     }];
 }
 
@@ -293,9 +280,7 @@
 
 #pragma mark - Public Methods
 - (void)hideSideslip {
-    for (LYSideslipCell *cell in self.tableView.visibleCells)
-        if ([cell isKindOfClass:LYSideslipCell.class])
-            [cell hiddenSideslipButton];
+    [self hiddenAllSideslipButton];
 }
 
 #pragma mark - Getter/Setter
