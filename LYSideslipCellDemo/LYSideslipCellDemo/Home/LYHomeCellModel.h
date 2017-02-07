@@ -22,5 +22,5 @@ typedef NS_ENUM(NSInteger, LYHomeCellType) {
 @property (nonatomic, copy) NSString *lastMessage;
 @property (nonatomic, assign) LYHomeCellType messageType;
 
-+ (NSArray *)requestDataArray;
++ (NSMutableArray *)requestDataArray;
 @end

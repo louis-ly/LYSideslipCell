@@ -10,9 +10,7 @@
 
 
 @implementation LYHomeCellModel
-
-
-+ (NSArray *)requestDataArray {
++ (NSMutableArray *)requestDataArray {
     NSArray *images = @[@"icon0", @"icon1", @"icon2", @"icon3", @"icon4"];
     NSArray *names = @[@"Louis", @"老帅哥", @"iOS Coder", @"iOS Developer", @"Joe"];
     NSArray *time = @[@"13:14", @"23:45", @"昨天", @"星期五", @"15/10/19"];

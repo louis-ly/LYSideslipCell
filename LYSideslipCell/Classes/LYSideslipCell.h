@@ -17,14 +17,11 @@ typedef NS_ENUM(NSInteger, LYSideslipCellActionStyle) {
 };
 
 @interface LYSideslipCellAction : NSObject
-
 + (instancetype)rowActionWithStyle:(LYSideslipCellActionStyle)style title:(nullable NSString *)title handler:(void (^)(LYSideslipCellAction *action, NSIndexPath *indexPath))handler;
-
 @property (nonatomic, readonly) LYSideslipCellActionStyle style;
 @property (nonatomic, copy, nullable) NSString *title;
 @property (nonatomic, strong, nullable) UIImage *image;
-@property (nonatomic, copy, nullable) UIColor *backgroundColor; // default background color is dependent on style
-
+@property (nonatomic, copy, nullable) UIColor *backgroundColor;
 @end
 
 @class LYSideslipCell;
@@ -49,10 +46,16 @@ typedef NS_ENUM(NSInteger, LYSideslipCellActionStyle) {
  */
 - (BOOL)sideslipCell:(LYSideslipCell *)sideslipCell canSideslipRowAtIndexPath:(NSIndexPath *)indexPath;
 
+/**
+ *  返回侧滑事件
+ *
+ *  @param sideslipCell 当前响应的cell
+ *  @param indexPath    cell在tableView中的位置
+ *
+ *  @return 数组为空, 则没有侧滑事件
+ */
 - (nullable NSArray<LYSideslipCellAction *> *)sideslipCell:(LYSideslipCell *)sideslipCell editActionsForRowAtIndexPath:(NSIndexPath *)indexPath;
 @end
-
-
 
 
 @interface LYSideslipCell : UITableViewCell
@@ -62,8 +65,6 @@ typedef NS_ENUM(NSInteger, LYSideslipCellActionStyle) {
 /**
  *  隐藏侧滑按钮
  */
-- (void)hiddenSideslipButton;
-
 - (void)hideSideslip;
 @end
 

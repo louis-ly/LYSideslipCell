@@ -16,15 +16,28 @@
 #define kMessage @"kMessage"
 
 @interface LYHomeViewController () <LYSideslipCellDelegate>
-@property (nonatomic, strong) NSArray *dataArray;
+@property (nonatomic, strong) NSMutableArray *dataArray;
 @end
 
-@implementation LYHomeViewController
+@implementation LYHomeViewController {
+    UIImageView *_logoImageView;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.tableView.backgroundColor = [UIColor colorWithRed:236/255.0 green:235/255.0 blue:243/255.0 alpha:1];
     self.tableView.rowHeight = 70;
     _dataArray = [LYHomeCellModel requestDataArray];
+    
+    _logoImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"login_logo"]];
+    _logoImageView.contentMode = UIViewContentModeCenter;
+    _logoImageView.alpha = 0.7;
+    [self.tableView addSubview:_logoImageView];
+}
+
+- (void)viewWillLayoutSubviews {
+    [super viewWillLayoutSubviews];
+    _logoImageView.frame = CGRectMake(0, -100, self.tableView.frame.size.width, 100);
 }
 
 #pragma mark - UITableViewDelegate
@@ -62,12 +75,13 @@
 - (NSArray<LYSideslipCellAction *> *)sideslipCell:(LYSideslipCell *)sideslipCell editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
     LYHomeCellModel *model = _dataArray[indexPath.row];
     LYSideslipCellAction *action1 = [LYSideslipCellAction rowActionWithStyle:LYSideslipCellActionStyleNormal title:@"取消关注" handler:^(LYSideslipCellAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
-        NSLog(@"点击了取消关注");
+        NSLog(@"取消关注");
         [sideslipCell hideSideslip];
     }];
     LYSideslipCellAction *action2 = [LYSideslipCellAction rowActionWithStyle:LYSideslipCellActionStyleDestructive title:@"删除" handler:^(LYSideslipCellAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
         NSLog(@"删除");
-        [sideslipCell hideSideslip];
+        [_dataArray removeObjectAtIndex:indexPath.row];
+        [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }];
     LYSideslipCellAction *action3 = [LYSideslipCellAction rowActionWithStyle:LYSideslipCellActionStyleNormal title:@"置顶" handler:^(LYSideslipCellAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
         NSLog(@"置顶");
@@ -89,9 +103,6 @@
             break;
     }
     return array;
-}
-- (void)sideslipCell:(LYSideslipCell *)sideslipCell rowAtIndexPath:(NSIndexPath *)indexPath didSelectedAtIndex:(NSInteger)index {
-    NSLog(@"选中了: %ld", index);
 }
 
 - (BOOL)sideslipCell:(LYSideslipCell *)sideslipCell canSideslipRowAtIndexPath:(NSIndexPath *)indexPath {
