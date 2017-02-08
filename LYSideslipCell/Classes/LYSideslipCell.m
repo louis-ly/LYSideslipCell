@@ -26,8 +26,15 @@
 }
 @end
 
+typedef NS_ENUM(NSInteger, LYSideslipCellState) {
+    LYSideslipCellStateNormal,
+    LYSideslipCellStateAnimating,
+    LYSideslipCellStateOpen
+};
+
 @interface LYSideslipCell () <UIGestureRecognizerDelegate>
 @property (nonatomic, assign) BOOL sideslip;
+@property (nonatomic, assign) LYSideslipCellState state;
 @end
 
 @implementation LYSideslipCell {
@@ -80,7 +87,7 @@
     if (gestureRecognizer == _panGesture) {
         // 若 tableView 不能滚动时, 还触发手势, 则隐藏侧滑
         if (!self.tableView.scrollEnabled) {
-            [self hiddenAllSideslipButton];
+            [self hiddenAllSideslip];
             return NO;
         }
         UIPanGestureRecognizer *gesture = (UIPanGestureRecognizer *)gestureRecognizer;
@@ -133,13 +140,13 @@
         } else if (self.contentView.frame.origin.x > 5) {
             [self hiddenWithBounceAnimation];
         } else if (fabs(self.contentView.frame.origin.x) >= 40 && velocity.x <= 0) {
-            [self showSideslipButton];
+            [self showSideslip];
         } else {
-            [self hiddenSideslipButton];
+            [self hiddenSideslip];
         }
         
     } else if (state == UIGestureRecognizerStateCancelled) {
-        [self hiddenAllSideslipButton];
+        [self hiddenAllSideslip];
     }
 }
 
@@ -151,81 +158,53 @@
         LYSideslipCellAction *action = _actions[btn.tag];
         if (action.handler) action.handler(action, self.indexPath);
     }
-    [self openAllOperation];
+    self.state = LYSideslipCellStateNormal;
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [super touchesBegan:touches withEvent:event];
-    if (_sideslip) [self hiddenAllSideslipButton];
+    if (_sideslip) [self hiddenAllSideslip];
 }
 
-#pragma mark - Private Methods
-- (void)closeAllOperation {
-    self.tableView.scrollEnabled = NO;
-    self.tableView.allowsSelection = NO;
-    for (LYSideslipCell *cell in self.tableView.visibleCells) {
-        if ([cell isKindOfClass:LYSideslipCell.class]) {
-            cell.sideslip = YES;
-            cell.userInteractionEnabled = NO;
-        }
-    }
-}
-
-- (void)openAllOperation {
-    self.tableView.scrollEnabled = YES;
-    self.tableView.allowsSelection = YES;
-    for (LYSideslipCell *cell in self.tableView.visibleCells) {
-        if ([cell isKindOfClass:LYSideslipCell.class]) {
-            cell.userInteractionEnabled = YES;
-            cell.sideslip = NO;
-        }
-    }
-}
-
+#pragma mark - Methods
 - (void)hiddenWithBounceAnimation {
-    [self closeAllOperation];
-    //self.tableView.userInteractionEnabled = NO;
+    self.state = LYSideslipCellStateAnimating;
     [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
         [self setContentViewX:-10];
     } completion:^(BOOL finished) {
-        [self hiddenSideslipButton];
+        [self hiddenSideslip];
     }];
 }
 
-- (void)hiddenAllSideslipButton {
+- (void)hiddenAllSideslip {
     for (LYSideslipCell *cell in self.tableView.visibleCells) {
         if ([cell isKindOfClass:LYSideslipCell.class]) {
-            [cell hiddenSideslipButton];
+            [cell hiddenSideslip];
         }
     }
 }
 
-- (void)hiddenSideslipButton {
+- (void)hiddenSideslip {
     if (self.contentView.frame.origin.x == 0) return;
     
-    [self closeAllOperation];
+    self.state = LYSideslipCellStateAnimating;
     [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
         [self setContentViewX:0];
     } completion:^(BOOL finished) {
-        [_btnContainView removeFromSuperview];
-        _btnContainView = nil;
-        [self openAllOperation];
+        self.state = LYSideslipCellStateNormal;
     }];
 }
 
-- (void)showSideslipButton {
-    [self closeAllOperation];
+- (void)showSideslip {
+    self.state = LYSideslipCellStateAnimating;
     [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
         [self setContentViewX:-_btnContainView.frame.size.width];
     } completion:^(BOOL finished) {
-        for (LYSideslipCell *cell in self.tableView.visibleCells) {
-            if ([cell isKindOfClass:LYSideslipCell.class]) {
-                cell.userInteractionEnabled = YES;
-            }
-        }
+        self.state = LYSideslipCellStateOpen;
     }];
 }
 
+#pragma mark - Setter
 - (void)setContentViewX:(CGFloat)x {
     CGRect frame = self.contentView.frame;
     frame.origin.x = x;
@@ -238,10 +217,9 @@
     if (_btnContainView) {
         [_btnContainView removeFromSuperview];
         _btnContainView = nil;
-    } else {
-        _btnContainView = [UIView new];
-        [self insertSubview:_btnContainView belowSubview:self.contentView];
     }
+    _btnContainView = [UIView new];
+    [self insertSubview:_btnContainView belowSubview:self.contentView];
     
     for (int i = 0; i < actions.count; i++) {
         LYSideslipCellAction *action = actions[i];
@@ -278,12 +256,35 @@
     }
 }
 
-#pragma mark - Public Methods
-- (void)hideSideslip {
-    [self hiddenAllSideslipButton];
+- (void)setState:(LYSideslipCellState)state {
+    _state = state;
+    
+    if (state == LYSideslipCellStateNormal) {
+        self.tableView.userInteractionEnabled = YES;
+        self.tableView.scrollEnabled = YES;
+        self.tableView.allowsSelection = YES;
+        for (LYSideslipCell *cell in self.tableView.visibleCells) {
+            if ([cell isKindOfClass:LYSideslipCell.class]) {
+                cell.sideslip = NO;
+            }
+        }
+        
+    } else if (state == LYSideslipCellStateAnimating) {
+        self.tableView.userInteractionEnabled = NO;
+        
+    } else if (state == LYSideslipCellStateOpen) {
+        self.tableView.userInteractionEnabled = YES;
+        self.tableView.scrollEnabled = NO;
+        self.tableView.allowsSelection = NO;
+        for (LYSideslipCell *cell in self.tableView.visibleCells) {
+            if ([cell isKindOfClass:LYSideslipCell.class]) {
+                cell.sideslip = YES;
+            }
+        }
+    }
 }
 
-#pragma mark - Getter/Setter
+#pragma mark - Getter
 - (UITableView *)tableView {
     if (!_tableView) {
         id view = self.superview;

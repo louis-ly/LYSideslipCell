@@ -73,7 +73,8 @@ typedef NS_ENUM(NSInteger, LYSideslipCellActionStyle) {
 /**
  *  隐藏侧滑按钮
  */
-- (void)hideSideslip;
+- (void)hiddenAllSideslip;
+- (void)hiddenSideslip;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -33,46 +33,29 @@ pod 'LYSideslipCell'
 @end
 ```
 
-2.在`tableView:cellForRowAtIndexPath:`方法中调用设置侧滑按钮方法:
+2.在`tableView:cellForRowAtIndexPath:`方法中设置代理:
 
 ```
-[cell setRightButtons:@[button2]];
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    LYHomeCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass(LYSideslipCell.class)];
+    if (!cell) {
+        cell = [[LYHomeCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:NSStringFromClass(LYSideslipCell.class)];
+        cell.delegate = self;
+    }
+    return cell;
+}
 ```
 
-侧滑按钮可自行创建, 本库也提供`rowActionWithStyle:title`方法来创建常用的两种按钮`LYSideslipCellActionStyleNormal(灰色)`和`LYSideslipCellActionStyleDestructive(红色)`
+3.实现`LYSideslipCellDelegate`协议`sideslipCell:editActionsForRowAtIndexPath:`方法，返回侧滑按钮事件数组。
 
 ```
-UIButton *button1 = [cell rowActionWithStyle:LYSideslipCellActionStyleNormal title:@"取消关注"];
-    UIButton *button2 = [cell rowActionWithStyle:LYSideslipCellActionStyleDestructive title:@"删除"];
-```
-
-3.设置代理 遵守`LYSideslipCellDelegate`协议, 实现用户按钮点击回调
-
-```
-cell.delegate = self;
-```
-
-```
-@protocol LYSideslipCellDelegate <NSObject>
-@optional;
-/**
- *  选中了侧滑按钮
- *
- *  @param sideslipCell 当前响应的cell
- *  @param indexPath    cell在tableView中的位置
- *  @param index        选中的是第几个action
- */
-- (void)sideslipCell:(LYSideslipCell *)sideslipCell rowAtIndexPath:(NSIndexPath *)indexPath didSelectedAtIndex:(NSInteger)index;
-/**
- *  告知当前位置的cell是否需要侧滑按钮
- *
- *  @param sideslipCell 当前响应的cell
- *  @param indexPath    cell在tableView中的位置
- *
- *  @return YES 表示当前cell可以侧滑, NO 不可以
- */
-- (BOOL)sideslipCell:(LYSideslipCell *)sideslipCell canSideslipRowAtIndexPath:(NSIndexPath *)indexPath;
-@end
+#pragma mark - LYSideslipCellDelegate
+- (NSArray<LYSideslipCellAction *> *)sideslipCell:(LYSideslipCell *)sideslipCell editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
+    LYSideslipCellAction *action = [LYSideslipCellAction rowActionWithStyle:LYSideslipCellActionStyleNormal title:@"备注" handler:^(LYSideslipCellAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+        [sideslipCell hiddenAllSideslip];
+    }];
+    return @[action];
+}
 ```
 
 4.更多细节请看demo

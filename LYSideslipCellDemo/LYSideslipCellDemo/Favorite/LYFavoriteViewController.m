@@ -65,14 +65,14 @@
 - (NSArray<LYSideslipCellAction *> *)sideslipCell:(LYSideslipCell *)sideslipCell editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
     LYSideslipCellAction *tagAction = [LYSideslipCellAction rowActionWithStyle:LYSideslipCellActionStyleNormal title:nil handler:^(LYSideslipCellAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
         NSLog(@"点击的打标签按钮");
-        [sideslipCell hideSideslip];
+        [sideslipCell hiddenAllSideslip];
     }];
     tagAction.backgroundColor = [UIColor clearColor];
     tagAction.image = [UIImage imageNamed:@"Fav_Edit_Tag"];
     
     LYSideslipCellAction *deleteAction = [LYSideslipCellAction rowActionWithStyle:LYSideslipCellActionStyleNormal title:nil handler:^(LYSideslipCellAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
         NSLog(@"点击的删除按钮");
-        [sideslipCell hideSideslip];
+        [sideslipCell hiddenAllSideslip];
     }];
     deleteAction.backgroundColor = [UIColor clearColor];
     deleteAction.image = [UIImage imageNamed:@"Fav_Edit_Delete"];

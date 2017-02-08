@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
 s.name         = "LYSideslipCell"
-s.version      = "1.0.0"
+s.version      = "1.1.0"
 s.summary      = "A tableViewCell like WeChat"
 s.homepage     = "https://github.com/louis-ly/LYSideslipCell"
 s.license      = "MIT"

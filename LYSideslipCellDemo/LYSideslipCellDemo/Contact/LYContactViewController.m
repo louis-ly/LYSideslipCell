@@ -82,7 +82,7 @@
 #pragma mark - LYSideslipCellDelegate
 - (NSArray<LYSideslipCellAction *> *)sideslipCell:(LYSideslipCell *)sideslipCell editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
     LYSideslipCellAction *action = [LYSideslipCellAction rowActionWithStyle:LYSideslipCellActionStyleNormal title:@"备注" handler:^(LYSideslipCellAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
-        [sideslipCell hideSideslip];
+        [sideslipCell hiddenAllSideslip];
     }];
     return @[action];
 }

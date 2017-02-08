@@ -76,7 +76,7 @@
     LYHomeCellModel *model = _dataArray[indexPath.row];
     LYSideslipCellAction *action1 = [LYSideslipCellAction rowActionWithStyle:LYSideslipCellActionStyleNormal title:@"取消关注" handler:^(LYSideslipCellAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
         NSLog(@"取消关注");
-        [sideslipCell hideSideslip];
+        [sideslipCell hiddenAllSideslip];
     }];
     LYSideslipCellAction *action2 = [LYSideslipCellAction rowActionWithStyle:LYSideslipCellActionStyleDestructive title:@"删除" handler:^(LYSideslipCellAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
         NSLog(@"删除");
@@ -85,7 +85,7 @@
     }];
     LYSideslipCellAction *action3 = [LYSideslipCellAction rowActionWithStyle:LYSideslipCellActionStyleNormal title:@"置顶" handler:^(LYSideslipCellAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
         NSLog(@"置顶");
-        [sideslipCell hideSideslip];
+        [sideslipCell hiddenAllSideslip];
     }];
     
     NSArray *array = @[];
