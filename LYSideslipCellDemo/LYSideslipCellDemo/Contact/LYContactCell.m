@@ -9,17 +9,6 @@
 #import "LYContactCell.h"
 
 @interface LYContactCell ()
-
-
 @end
 @implementation LYContactCell
-
-- (void)layoutSubviews {
-    [super layoutSubviews];
-    
-    CGRect frame = self.contentView.frame;
-    frame.size.width = self.bounds.size.width;
-    self.contentView.frame = frame;
-}
-
 @end

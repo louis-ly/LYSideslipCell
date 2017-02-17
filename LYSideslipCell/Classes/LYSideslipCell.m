@@ -42,6 +42,7 @@ typedef NS_ENUM(NSInteger, LYSideslipCellState) {
     NSIndexPath *_indexPath;
     NSArray <LYSideslipCellAction *>* _actions;
     UIPanGestureRecognizer *_panGesture;
+    UIPanGestureRecognizer *_tableViewPan;
 }
 
 #pragma mark - Life Cycle
@@ -80,6 +81,10 @@ typedef NS_ENUM(NSInteger, LYSideslipCellState) {
     
     // 侧滑状态旋转屏幕时, 保持侧滑
     if (_sideslip) [self setContentViewX:x];
+    
+    CGRect frame = self.contentView.frame;
+    frame.size.width = self.bounds.size.width;
+    self.contentView.frame = frame;
 }
 
 #pragma mark - UIGestureRecognizerDelegate
@@ -113,11 +118,21 @@ typedef NS_ENUM(NSInteger, LYSideslipCellState) {
             }
         }
         return shouldBegin;
+    } else if (gestureRecognizer == _tableViewPan) {
+        if (self.tableView.scrollEnabled) {
+            return NO;
+        }
     }
     return YES;
 }
 
 #pragma mark - Response Events
+- (void)tableViewPan:(UIPanGestureRecognizer *)pan {
+    if (!self.tableView.scrollEnabled && pan.state == UIGestureRecognizerStateBegan) {
+        [self hiddenAllSideslip];
+    }
+}
+
 - (void)contentViewPan:(UIPanGestureRecognizer *)pan {
     CGPoint point = [pan translationInView:pan.view];
     UIGestureRecognizerState state = pan.state;
@@ -260,7 +275,6 @@ typedef NS_ENUM(NSInteger, LYSideslipCellState) {
     _state = state;
     
     if (state == LYSideslipCellStateNormal) {
-        self.tableView.userInteractionEnabled = YES;
         self.tableView.scrollEnabled = YES;
         self.tableView.allowsSelection = YES;
         for (LYSideslipCell *cell in self.tableView.visibleCells) {
@@ -270,10 +284,8 @@ typedef NS_ENUM(NSInteger, LYSideslipCellState) {
         }
         
     } else if (state == LYSideslipCellStateAnimating) {
-        self.tableView.userInteractionEnabled = NO;
-        
+
     } else if (state == LYSideslipCellStateOpen) {
-        self.tableView.userInteractionEnabled = YES;
         self.tableView.scrollEnabled = NO;
         self.tableView.allowsSelection = NO;
         for (LYSideslipCell *cell in self.tableView.visibleCells) {
@@ -292,6 +304,9 @@ typedef NS_ENUM(NSInteger, LYSideslipCellState) {
             view = [view superview];
         }
         _tableView = (UITableView *)view;
+        _tableViewPan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(tableViewPan:)];
+        _tableViewPan.delegate = self;
+        [_tableView addGestureRecognizer:_tableViewPan];
     }
     return _tableView;
 }
