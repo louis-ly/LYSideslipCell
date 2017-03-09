@@ -87,6 +87,11 @@ typedef NS_ENUM(NSInteger, LYSideslipCellState) {
     self.contentView.frame = frame;
 }
 
+- (void)prepareForReuse {
+    [super prepareForReuse];
+    if (_sideslip) [self hiddenSideslip];
+}
+
 #pragma mark - UIGestureRecognizerDelegate
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
     if (gestureRecognizer == _panGesture) {
@@ -202,6 +207,8 @@ typedef NS_ENUM(NSInteger, LYSideslipCellState) {
     [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
         [self setContentViewX:0];
     } completion:^(BOOL finished) {
+        [_btnContainView removeFromSuperview];
+        _btnContainView = nil;
         self.state = LYSideslipCellStateNormal;
     }];
 }
@@ -278,8 +285,6 @@ typedef NS_ENUM(NSInteger, LYSideslipCellState) {
                 cell.sideslip = NO;
             }
         }
-        [_btnContainView removeFromSuperview];
-        _btnContainView = nil;
         
     } else if (state == LYSideslipCellStateAnimating) {
 
