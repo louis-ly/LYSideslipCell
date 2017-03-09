@@ -39,7 +39,6 @@ typedef NS_ENUM(NSInteger, LYSideslipCellState) {
 
 @implementation LYSideslipCell {
     UITableView *_tableView;
-    NSIndexPath *_indexPath;
     NSArray <LYSideslipCellAction *>* _actions;
     UIPanGestureRecognizer *_panGesture;
     UIPanGestureRecognizer *_tableViewPan;
@@ -109,7 +108,7 @@ typedef NS_ENUM(NSInteger, LYSideslipCellState) {
         
         // 询问代理是否需要侧滑
         if ([_delegate respondsToSelector:@selector(sideslipCell:canSideslipRowAtIndexPath:)]) {
-            shouldBegin = [_delegate sideslipCell:self canSideslipRowAtIndexPath:[self.tableView indexPathForCell:self]] || _sideslip;
+            shouldBegin = [_delegate sideslipCell:self canSideslipRowAtIndexPath:self.indexPath] || _sideslip;
         }
         
         if (shouldBegin) {
@@ -315,8 +314,7 @@ typedef NS_ENUM(NSInteger, LYSideslipCellState) {
 }
 
 - (NSIndexPath *)indexPath {
-    if (!_indexPath) _indexPath = [self.tableView indexPathForCell:self];
-    return _indexPath;
+    return [self.tableView indexPathForCell:self];
 }
 @end
 
