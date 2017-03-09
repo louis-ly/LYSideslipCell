@@ -278,6 +278,8 @@ typedef NS_ENUM(NSInteger, LYSideslipCellState) {
                 cell.sideslip = NO;
             }
         }
+        [_btnContainView removeFromSuperview];
+        _btnContainView = nil;
         
     } else if (state == LYSideslipCellStateAnimating) {
 
