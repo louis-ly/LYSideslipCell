@@ -192,11 +192,7 @@ typedef NS_ENUM(NSInteger, LYSideslipCellState) {
 }
 
 - (void)hiddenAllSideslip {
-    for (LYSideslipCell *cell in self.tableView.visibleCells) {
-        if ([cell isKindOfClass:LYSideslipCell.class]) {
-            [cell hiddenSideslip];
-        }
-    }
+    [self.tableView hiddenAllSideslip];
 }
 
 - (void)hiddenSideslip {
@@ -314,5 +310,16 @@ typedef NS_ENUM(NSInteger, LYSideslipCellState) {
 - (NSIndexPath *)indexPath {
     if (!_indexPath) _indexPath = [self.tableView indexPathForCell:self];
     return _indexPath;
+}
+@end
+
+
+@implementation UITableView (LYSideslipCell)
+- (void)hiddenAllSideslip {
+    for (LYSideslipCell *cell in self.visibleCells) {
+        if ([cell isKindOfClass:LYSideslipCell.class]) {
+            [cell hiddenSideslip];
+        }
+    }
 }
 @end

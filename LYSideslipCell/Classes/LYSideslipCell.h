@@ -77,4 +77,9 @@ typedef NS_ENUM(NSInteger, LYSideslipCellActionStyle) {
 - (void)hiddenSideslip;
 @end
 
+
+@interface UITableView (LYSideslipCell)
+- (void)hiddenAllSideslip;
+@end
+
 NS_ASSUME_NONNULL_END
